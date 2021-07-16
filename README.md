@@ -4,6 +4,7 @@
 
 DevSecOps CICD pipeline demo using several technologies such as:
 
+- [RedHat Advanced Cluster Management](https://www.redhat.com/en/technologies/management/advanced-cluster-management)
 - [Openshift Pipelines](https://www.openshift.com/learn/topics/ci-cd)
 - [Openshift GitOps](https://www.openshift.com/blog/announcing-openshift-gitops)
 - [Openshift Advanced Cluster Security for Kubernetes](https://www.redhat.com/en/resources/advanced-cluster-security-for-kubernetes-datasheet)
@@ -23,7 +24,7 @@ DevSecOps CICD pipeline demo using several technologies such as:
 
 # Overview
 
-## 1. Continuous Integration
+## 2. Continuous Integration
 
 On every push to the spring-petclinic git repository on Gogs git server, the following steps are executed within the Tekton pipeline:
 
@@ -35,7 +36,7 @@ On every push to the spring-petclinic git repository on Gogs git server, the fol
 3. Application is packaged as a JAR and [released to Sonatype Nexus](docs/Steps.md#release-app) snapshot repository
 4. A [container image is built](docs/Steps.md#build-image) in DEV environment using S2I, and pushed to OpenShift internal registry, and tagged with spring-petclinic:[branch]-[commit-sha] and spring-petclinic:latest
 
-## 2. DevSecOps steps using Advanced Cluster Management
+## 3. DevSecOps steps using Advanced Cluster Management
 
 Advanced Cluster Management for Kubernetes controls clusters and applications from a single console, with built-in security policies.
 
@@ -54,7 +55,7 @@ NOTE: these 3 steps are executed in parallel for saving time in our DevSecOps pi
 
 8. Kubernetes [kustomization files updated](docs/Steps.md#update-deployment) with the latest image [commit-sha] in the overlays for dev. This will ensure that our Application are deployed using the specific built image in this pipeline.
 
-## 3. Continuous Delivery
+## 4. Continuous Delivery
 
 Argo CD continuously monitor the configurations stored in the Git repository and uses Kustomize to overlay environment specific configurations when deploying the application to DEV and STAGE environments.
 
@@ -68,7 +69,7 @@ and deploys every manifest that is defined in the branch/repo of our application
 
 <img align="center" width="750" src="docs/pics/pipeline6.png">
 
-## 4. PostCI - Pentesting and Performance Tests
+## 5. PostCI - Pentesting and Performance Tests
 
 Once our application is deployed, we need to ensure of our application is stable and performant and also that nobody can hack our application easily.
 
@@ -77,7 +78,7 @@ Once our application is deployed, we need to ensure of our application is stable
 12. The [pentesting is executed](docs/Steps.md#pentesting-tests-using-zap-proxy) using the web scanner [OWASP Zap Proxy](https://www.zaproxy.org) using a baseline in order to check the possible vulnerabilities, and a Zap Proxy report is uploaded to the report server repository.
 13. In parallel the [performance tests are executed](docs/Steps.md#performance-tests-using-gatling) using the load test [Gatling](https://gatling.io/) and a performance report is uploaded to the report server repository.
 
-## 5. Notifications
+## 6. Notifications
 
 ACS can be integrated with several Notifier for notify if certain events happened in the clusters managed. In our case, we integrated with Slack in order to receive notifications when some Policies are violated in order to have more useful information:
 
@@ -102,6 +103,8 @@ For example this Security Policy, checks if a RH Package Manager (dnf,yum) is in
 This ensures that we have the total control of our pipelines, and no image is pushed into your registry or deployed in your system that surpases the Security Policies defined.
 
 # Deploy
+
+Deploy ACS via a Policy
 
 ## Bootstrap
 
